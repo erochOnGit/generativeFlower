@@ -36,21 +36,31 @@ class Petal {
       this.extrudeSettings
     );
     // this.geometry2.mergeVertices();
-    // this.geometry2.computeVertexNormals();
 
-    this.material = new THREE.MeshNormalMaterial({ wireframe: true });
+    this.material = new THREE.MeshStandardMaterial({
+      color: 0xffff00,
+      roughness: 0.4,
+      metalness: 0,
+      emissive: 0x0
+      // flatShading: true
+    });
     this.mesh = new THREE.Mesh(this.geometry2, this.material);
     this.mesh.position.set(position.x, position.y, position.z);
     this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
-    this.split = 1;
-    console.log(this.mesh.geometry);
+    this.mesh.recieveShadow = true;
+    this.mesh.castShadow = true;
+
+    this.mesh.geometry.vertices.forEach(vertice => {
+      let distance = vertice.distanceTo(new THREE.Vector3(0, 0, 0));
+      if (distance > 0.01) {
+        vertice.z = -Math.sin(distance) + 1.4;
+      }
+    });
+    this.geometry2.computeVertexNormals();
   }
 
   update(scene, time) {
-    this.mesh.geometry.vertices.forEach(vertice => {
-      vertice.z += -Math.cos(time * 3 + vertice.y * 3) * 0.003;
-    });
-    this.mesh.geometry.verticesNeedUpdate = true;
+    // this.mesh.geometry.verticesNeedUpdate = true;
   }
 }
 export default Petal;
